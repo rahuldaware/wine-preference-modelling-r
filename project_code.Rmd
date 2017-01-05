@@ -20,7 +20,18 @@ Let us read the CSV file into R and explain all 11 properties. These properties 
 11. **alcohol**: the percent alcohol content of the wine  
 12. **quality** : score between 0 and 10. 10 being the best  
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Load all of the packages that you end up using
+# in your analysis in this code chunk.
+
+# Notice that the parameter "echo" was set to FALSE for this code chunk.
+# This prevents the code from displaying in the knitted HTML output.
+# You should set echo=FALSE for all code chunks in your file.
+
+library(ggplot2)
+```
+
+```{r echo=FALSE, Load_the_Data}
 wineData = read.csv("wineQualityReds.csv")
 str(wineData)
 ```
