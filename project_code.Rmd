@@ -3,7 +3,9 @@ title: Exploratory Data Analysis on Red Wine Dataset to find which parameters af
   the red wine quality
 author: "Rahul Daware (rahuldaware19@gmail.com)"
 output:
-  html_document: default
+  html_document:
+    fig_width : 12
+    fig_height : 10
   pdf_document: default
 ---
 
@@ -47,7 +49,7 @@ Next, let us look at data set summary:
 summary(wineData)
 ```
 
-### Step 2: Plots with One Variable  
+### Step 2: Univariate Analysis  
 
 
 The histogram of Red Wine Quality is drawn below : 
@@ -107,8 +109,9 @@ ggplot(data = wineData, aes(x = wineData$citric.acid)) +
 
 The citric acid content falls in the range of 0 to 0.6.  
 
-### Step 3 : Plots with two variables
+### Step 3 : Bivariate Analysis
 
+Lets draw correlation matrix of each variable with other.
 ```{r echo=FALSE, warning=FALSE}
 library(GGally)
 theme_set(theme_minimal(20))
@@ -117,3 +120,46 @@ wine_subset <- wineData[,c(2:12)]
 names(wine_subset)
 ggpairs(wine_subset)
 ```
+
+
+To find out which parameter affects the quality, let us correlate quality with all other parameters
+```{r echo=FALSE}
+cor(wineData[,2:12], wineData$quality)
+```
+
+From this, we can see that the quality of wine has less or negative correlation with acidity, no correlation with sugar and positive correlation with alcohol.  
+
+### Step 4 : Multivariate Analysis
+
+Let us find the effect of alcohol and citric acid on quality of red wine.  
+
+```{r echo=FALSE, warning=FALSE}
+ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$citric.acid, color = quality)) +
+  scale_x_continuous("Citric Acid") +
+  scale_y_continuous("Alcohol") +
+  ggtitle("Relationship between Quality, Alcohol and Citric Acid") +
+  geom_point()
+```
+
+From the above plot, we can see that the quality is higher when both alcohol and citric acid content is higher.
+
+Let us plot a few more plots and find out which parameters affect the quality.  
+
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 500)
+ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$sulphates, color = quality)) +
+  scale_x_continuous("Sulphates") +
+  scale_y_continuous("Alcohol") +
+  ggtitle("Relationship between Quality, Alcohol and Sulphates") +
+  geom_point()
+```
+
+Here we see that the quality increases with sulphates. But alcohol has less effect on quality with sulphates.  
+
+### Step 5: Final Plots
+
+
+### Step 6: Reflection
+
+
+
