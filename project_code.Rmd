@@ -1,6 +1,10 @@
 ---
-title: Exploratory Data Analysis on Red Wine Dataset to find which parameters affect the red wine quality
-author: Rahul Daware (rahuldaware19@gmail.com)
+title: Exploratory Data Analysis on Red Wine Dataset to find which parameters affect
+  the red wine quality
+author: "Rahul Daware (rahuldaware19@gmail.com)"
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ### Step 1: Import Red Wine Dataset  
@@ -27,11 +31,89 @@ Let us read the CSV file into R and explain all 11 properties. These properties 
 # Notice that the parameter "echo" was set to FALSE for this code chunk.
 # This prevents the code from displaying in the knitted HTML output.
 # You should set echo=FALSE for all code chunks in your file.
-
-library(ggplot2)
+require(ggplot2)
+require(cowplot)
 ```
 
-```{r echo=FALSE, Load_the_Data}
+Let us look at the structure of dataset:
+
+```{r echo=FALSE}
 wineData = read.csv("wineQualityReds.csv")
 str(wineData)
+```
+
+Next, let us look at data set summary:
+```{r echo=FALSE}
+summary(wineData)
+```
+
+### Step 2: Plots with One Variable  
+
+
+The histogram of Red Wine Quality is drawn below : 
+```{r echo=FALSE, warning=FALSE}
+ggplot(data = wineData, aes(x = wineData$quality)) + 
+  scale_x_continuous("Wine Quality") + 
+  scale_y_continuous("Count") +
+  ggtitle("Histogram of Red Wine Quality") +
+  geom_histogram(binwidth = 0.25, fill = "blue", color = "black") 
+```
+From the above graph, we can see that the quality of red wine peaks at 5 and drops down on extreme ends. This almost follows normal distribution.   
+
+
+Now let us look at some other variables before moving into advanced plots, let us plot histogram of acidities
+
+```{r echo=FALSE, warning=FALSE}
+p1 = ggplot(data = wineData, aes(x=wineData$fixed.acidity)) +  
+    scale_x_continuous("Fixed Acidity") + 
+    scale_y_continuous("Count") +
+    ggtitle("Histogram of Fixed Acidity") +
+    geom_histogram(binwidth=0.25, fill = "blue", color = "black") 
+  
+p2 = ggplot(data = wineData, aes(x=wineData$volatile.acidity)) +
+     scale_x_continuous("Volatile Acidity") + 
+     scale_y_continuous("Count") +
+     ggtitle("Histogram of Volatile Acidity") +
+  geom_histogram(binwidth=0.25, fill = "blue", color= "black")
+
+plot_grid(p1, p2)
+```
+
+The fixed acidity falls in the range of 6 to 10.
+
+The histogram of pH level is shown below:
+
+
+```{r echo=FALSE, warning=FALSE}
+ggplot(data = wineData, aes(x = wineData$pH)) + 
+  scale_x_continuous("pH") + 
+  scale_y_continuous("Count") +
+  ggtitle("Histogram of Red Wine pH Level") +
+  geom_histogram(binwidth = 0.25, fill = "blue", color = "black") 
+```
+
+From the above plot, pH value falls in 3.0 to 3.5 range.
+The histogram of Citric Acid is shown below:  
+
+
+```{r echo=FALSE, warning=FALSE}
+ggplot(data = wineData, aes(x = wineData$citric.acid)) + 
+  scale_x_continuous("Citric Acid") + 
+  scale_y_continuous("Count") +
+  ggtitle("Histogram of Red Wine Citric Acid") +
+  geom_histogram(binwidth = 0.25, fill = "blue", color = "black") 
+```
+
+
+The citric acid content falls in the range of 0 to 0.6.  
+
+### Step 3 : Plots with two variables
+
+```{r echo=FALSE, warning=FALSE}
+library(GGally)
+theme_set(theme_minimal(20))
+set.seed(2222)
+wine_subset <- wineData[,c(2:12)]
+names(wine_subset)
+ggpairs(wine_subset)
 ```
