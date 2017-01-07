@@ -83,6 +83,48 @@ plot_grid(p1, p2)
 
 The fixed acidity falls in the range of 6 to 10.
 
+
+Also let us plot histograms with all other variables:  
+
+```{r echo=FALSE, warning=FALSE}
+ggplot(data = wineData, aes(x = wineData$residual.sugar)) + 
+  scale_x_continuous("Wine Residual Sugar") + 
+  scale_y_continuous("Count") +
+  ggtitle("Histogram of Red Wine Residual Sugar") +
+  geom_histogram(binwidth = 0.25, fill = "blue", color = "black") 
+
+ggplot(data = wineData, aes(x = wineData$chlorides)) + 
+  scale_x_continuous("Red Wine Chlorides") + 
+  scale_y_continuous("Count") +
+  ggtitle("Histogram of Red Wine Chlorides") +
+  geom_histogram(binwidth = 0.05, fill = "blue", color = "black") 
+
+ggplot(data = wineData, aes(x = wineData$free.sulfur.dioxide)) + 
+  scale_x_continuous("Red Wine Free Sulfur Dioxide") + 
+  scale_y_continuous("Count") +
+  ggtitle("Histogram of Red Wine Free Sulfur Dioxide") +
+  geom_histogram(binwidth = 0.5, fill = "blue", color = "black") 
+
+ggplot(data = wineData, aes(x = wineData$total.sulfur.dioxide)) + 
+  scale_x_continuous("Red Wine Total Sulfur Dioxide") + 
+  scale_y_continuous("Count") +
+  ggtitle("Histogram of Red Wine Total Sulfur Dioxide") +
+  geom_histogram(binwidth = 2, fill = "blue", color = "black")
+
+ggplot(data = wineData, aes(x = wineData$density)) + 
+  scale_x_continuous("Red Wine Density") + 
+  scale_y_continuous("Count") +
+  ggtitle("Histogram of Red Wine Density") +
+  geom_histogram(binwidth = 0.001, fill = "blue", color = "black")
+
+ggplot(data = wineData, aes(x = wineData$sulphates)) + 
+  scale_x_continuous("Red Wine Sulphates") + 
+  scale_y_continuous("Count") +
+  ggtitle("Histogram of Red Wine Sulphates") +
+  geom_histogram(binwidth = 0.25, fill = "blue", color = "black")
+
+```
+
 The histogram of pH level is shown below:
 
 
@@ -129,14 +171,15 @@ cor(wineData[,2:12], wineData$quality)
 
 From this, we can see that the quality of wine has less or negative correlation with acidity, no correlation with sugar and positive correlation with alcohol.  
 
+
 ### Step 4 : Multivariate Analysis
 
 Let us find the effect of alcohol and citric acid on quality of red wine.  
 
 ```{r echo=FALSE, warning=FALSE}
 ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$citric.acid, color = quality)) +
-  scale_x_continuous("Citric Acid") +
-  scale_y_continuous("Alcohol") +
+  scale_x_continuous("Alcohol") +
+  scale_y_continuous("Citric Acid") +
   ggtitle("Relationship between Quality, Alcohol and Citric Acid") +
   geom_point()
 ```
@@ -148,18 +191,129 @@ Let us plot a few more plots and find out which parameters affect the quality.
 ```{r set-options, echo=FALSE, cache=FALSE}
 options(width = 500)
 ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$sulphates, color = quality)) +
-  scale_x_continuous("Sulphates") +
-  scale_y_continuous("Alcohol") +
+  scale_y_continuous("Sulphates") +
+  scale_x_continuous("Alcohol") +
   ggtitle("Relationship between Quality, Alcohol and Sulphates") +
   geom_point()
 ```
 
-Here we see that the quality increases with sulphates. But alcohol has less effect on quality with sulphates.  
+Here we see that the sulphates show very less effect on the quality of red wine.
+
+Let us take one more example. Let us find if volatile acidity and alcohol have any effect on quality.
+```{r echo=FALSE, cache=FALSE}
+ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$volatile.acidity, color = quality)) +
+  scale_y_continuous("Volatile Acidity") +
+  scale_x_continuous("Alcohol") +
+  ggtitle("Relationship between Quality, Alcohol and Volatile Acidity") +
+  geom_point()
+```
+
+This plot gives a guess that higher the volatile acidity, lower is the quality. But this cannot be confirmed for sure.
+
+Next, let us find if pH and alcohol have any effect on quality.
+
+```{r echo=FALSE, cache=FALSE}
+
+ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$pH, color = quality)) +
+  scale_y_continuous("pH") +
+  scale_x_continuous("Alcohol") +
+  ggtitle("Relationship between Quality, Alcohol and pH") +
+  geom_point()
+```
+
+From the above plot, it is difficult to make any conclusion.  
 
 ### Step 5: Final Plots
+
+In the final plots, let us group by four range of quality. Let us call it bad, average, good and very good.   
+Bad is when quality is between 0-3, average between 3-5, good between 5-8 and very good is 8-10. All of them are not including upper bound.
+
+```{r echo=FALSE, cache=FALSE}
+wineData$category[wineData$quality < 4] = "bad"
+wineData$category[wineData$quality >= 4 & wineData$quality < 6] = "average"
+wineData$category[wineData$quality >= 6 & wineData$quality < 8] = "good"
+wineData$category[wineData$quality >= 8] = "very.good"
+```
+Let us use this category value and plot the above three plots again. First let us plot the histogram of category.
+
+```{r echo=FALSE, cache=FALSE}
+wineData$category <- factor(wineData$category, levels = c("bad","average","good","very.good"))
+ggplot(data = wineData, aes(x = wineData$category)) + 
+  scale_x_discrete("Category") + 
+  scale_y_discrete("Count") +
+  ggtitle("Histogram of Red Wine Category") +
+  geom_bar(fill = "blue", color = "black", stat = "count") 
+```
+
+Now, let us plot the above multivariate graphs with the category variable. This will give more clear information.
+
+```{r echo=FALSE, warning=FALSE}
+ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$citric.acid, color = category)) +
+  scale_y_continuous("Citric Acid") +
+  scale_x_continuous("Alcohol") +
+  ggtitle("Relationship between Category, Alcohol and Citric Acid") +
+  geom_point()
+```
+
+Above plot clearly shows that higher the alcohol and citric acid, higher is the quality of red wine.
+
+
+
+```{r echo=FALSE, cache=FALSE}
+ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$sulphates, color = category)) +
+  scale_y_continuous("Sulphates") +
+  scale_x_continuous("Alcohol") +
+  ggtitle("Relationship between Category, Alcohol and Sulphates") +
+  geom_point()
+```
+
+From the above plot, we see that the sulphate value of more than 0.75 have higher category.
+
+
+
+```{r echo=FALSE, cache=FALSE}
+ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$volatile.acidity, color = category)) +
+  scale_y_continuous("Volatile Acidity") +
+  scale_x_continuous("Alcohol") +
+  ggtitle("Relationship between Category, Alcohol and Volatile Acidity") +
+  geom_point()
+```
+
+From the above plot, we can see that higher the volatile acidity, lower is the quality of wine.
+
+
+```{r echo=FALSE, cache=FALSE}
+ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$pH, color = category)) +
+  scale_y_continuous("pH") +
+  scale_x_continuous("Alcohol") +
+  ggtitle("Relationship between quality, Alcohol and pH") +
+  geom_point()
+```
+
+This plot shows that if both pH and Alcohol is high, the quality of red wine tends to be higher.  
 
 
 ### Step 6: Reflection
 
+It is time to reflect all the observations. First, we tried to observe how each individual variable varies. We found that quality of red wine follows normal distribution with majority of quality values fall near to the mean. The fixed acidity and volatile acidity also follows normal distribution. The residual sugar value does not seem to follow normal ditribution. Most values fall near the range of 1 to 3 while some outliers extending upto 15. The chlorides have most values less than 0.15. Some values fall in the higher range. It would be interesting to see if any of these outliers have higher quality. The Free Sulfur Dioxide value and Total Sulfur Dioxide value also fall in the lower range. The red wine density seems to follow normal distribution with mean at around 0.9975.  
 
+In the bivariate analysis, we find the correlation of quality with rest other variables. We see that Alcohol content has the highest correlation with quality followed by volatile acidity and sulphates. The correlation values also show that residual sugar and pH should have very less effect on the quality as these correlation values are closer to 0.  
+
+In the multivariate analysis, the plots did not give a very clear idea. But we could see that the alcohol content has positive effect on the quality. To get a clear picture, we binned the quality into four categories (bad, average, good, very good). Most of the values fell into average and good bins. We again ran the plots with these values and found out that alcohol clearly has positive effect on the quality. When alcohol and citric acid both are high, there is higher probability for the red wine to be of good quality. The suphates did not show much variation. They had very less effect on the quality. The volatile acidity clearly showed negative effect on the quality. Lower the volatile acidity, higher would be the quality.  
+
+The further analysis of this project would include comparing every two variables against the quality and find which two variables affect the quality the most. We took alcohol in most of the example as the correlation showed positive influence of alcohol on acidity.
+
+#### References :
+
+The dataset was downloaded from the folowing reference :  
+
+
+
+P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis. 
+  Modeling wine preferences by data mining from physicochemical properties.
+  In Decision Support Systems, Elsevier, 47(4):547-553. ISSN: 0167-9236.
+
+  Available at: [@Elsevier] http://dx.doi.org/10.1016/j.dss.2009.05.016  
+                [Pre-press (pdf)] http://www3.dsi.uminho.pt/pcortez/winequality09.pdf  
+                [bib] http://www3.dsi.uminho.pt/pcortez/dss09.bib  
 
