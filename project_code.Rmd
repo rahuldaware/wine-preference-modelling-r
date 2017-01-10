@@ -35,6 +35,7 @@ Let us read the CSV file into R and explain all 11 properties. These properties 
 # You should set echo=FALSE for all code chunks in your file.
 require(ggplot2)
 require(cowplot)
+require(GGally)
 ```
 
 Let us look at the structure of dataset:
@@ -70,7 +71,7 @@ p1 = ggplot(data = wineData, aes(x=wineData$fixed.acidity)) +
     scale_x_continuous("Fixed Acidity") + 
     scale_y_continuous("Count") +
     ggtitle("Histogram of Fixed Acidity") +
-    geom_histogram(binwidth=0.25, fill = "blue", color = "black") 
+    geom_histogram(binwidth=1, fill = "blue", color = "black") 
   
 p2 = ggplot(data = wineData, aes(x=wineData$volatile.acidity)) +
      scale_x_continuous("Volatile Acidity") + 
@@ -91,7 +92,7 @@ ggplot(data = wineData, aes(x = wineData$residual.sugar)) +
   scale_x_continuous("Wine Residual Sugar") + 
   scale_y_continuous("Count") +
   ggtitle("Histogram of Red Wine Residual Sugar") +
-  geom_histogram(binwidth = 0.25, fill = "blue", color = "black") 
+  geom_histogram(binwidth = 1, fill = "blue", color = "black") 
 
 ggplot(data = wineData, aes(x = wineData$chlorides)) + 
   scale_x_continuous("Red Wine Chlorides") + 
@@ -103,13 +104,13 @@ ggplot(data = wineData, aes(x = wineData$free.sulfur.dioxide)) +
   scale_x_continuous("Red Wine Free Sulfur Dioxide") + 
   scale_y_continuous("Count") +
   ggtitle("Histogram of Red Wine Free Sulfur Dioxide") +
-  geom_histogram(binwidth = 0.5, fill = "blue", color = "black") 
+  geom_histogram(binwidth = 4, fill = "blue", color = "black") 
 
 ggplot(data = wineData, aes(x = wineData$total.sulfur.dioxide)) + 
   scale_x_continuous("Red Wine Total Sulfur Dioxide") + 
   scale_y_continuous("Count") +
   ggtitle("Histogram of Red Wine Total Sulfur Dioxide") +
-  geom_histogram(binwidth = 2, fill = "blue", color = "black")
+  geom_histogram(binwidth = 8, fill = "blue", color = "black")
 
 ggplot(data = wineData, aes(x = wineData$density)) + 
   scale_x_continuous("Red Wine Density") + 
@@ -121,7 +122,7 @@ ggplot(data = wineData, aes(x = wineData$sulphates)) +
   scale_x_continuous("Red Wine Sulphates") + 
   scale_y_continuous("Count") +
   ggtitle("Histogram of Red Wine Sulphates") +
-  geom_histogram(binwidth = 0.25, fill = "blue", color = "black")
+  geom_histogram(binwidth = 0.1, fill = "blue", color = "black")
 
 ```
 
@@ -133,7 +134,7 @@ ggplot(data = wineData, aes(x = wineData$pH)) +
   scale_x_continuous("pH") + 
   scale_y_continuous("Count") +
   ggtitle("Histogram of Red Wine pH Level") +
-  geom_histogram(binwidth = 0.25, fill = "blue", color = "black") 
+  geom_histogram(binwidth = 0.1, fill = "blue", color = "black") 
 ```
 
 From the above plot, pH value falls in 3.0 to 3.5 range.
@@ -145,7 +146,7 @@ ggplot(data = wineData, aes(x = wineData$citric.acid)) +
   scale_x_continuous("Citric Acid") + 
   scale_y_continuous("Count") +
   ggtitle("Histogram of Red Wine Citric Acid") +
-  geom_histogram(binwidth = 0.25, fill = "blue", color = "black") 
+  geom_histogram(binwidth = 0.05, fill = "blue", color = "black") 
 ```
 
 
@@ -155,10 +156,11 @@ The citric acid content falls in the range of 0 to 0.6.
 
 Lets draw correlation matrix of each variable with other.
 ```{r echo=FALSE, warning=FALSE}
-library(GGally)
+exclude <- c("X")
+keep <- !(names(wineData) %in% exclude)
 theme_set(theme_minimal(20))
 set.seed(2222)
-wine_subset <- wineData[,c(2:12)]
+wine_subset <- wineData[,keep]
 names(wine_subset)
 ggpairs(wine_subset)
 ```
@@ -166,10 +168,15 @@ ggpairs(wine_subset)
 
 To find out which parameter affects the quality, let us correlate quality with all other parameters
 ```{r echo=FALSE}
-cor(wineData[,2:12], wineData$quality)
+
+cor(wineData[,keep], wineData$quality)
 ```
 
 From this, we can see that the quality of wine has less or negative correlation with acidity, no correlation with sugar and positive correlation with alcohol.  
+
+# TODO Add more bivariate plots here
+
+
 
 
 ### Step 4 : Multivariate Analysis
@@ -177,7 +184,8 @@ From this, we can see that the quality of wine has less or negative correlation 
 Let us find the effect of alcohol and citric acid on quality of red wine.  
 
 ```{r echo=FALSE, warning=FALSE}
-ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$citric.acid, color = quality)) +
+ggplot(data= wineData, 
+       aes(x = wineData$alcohol, y = wineData$citric.acid, color = quality)) +
   scale_x_continuous("Alcohol") +
   scale_y_continuous("Citric Acid") +
   ggtitle("Relationship between Quality, Alcohol and Citric Acid") +
@@ -190,7 +198,8 @@ Let us plot a few more plots and find out which parameters affect the quality.
 
 ```{r set-options, echo=FALSE, cache=FALSE}
 options(width = 500)
-ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$sulphates, color = quality)) +
+ggplot(data= wineData, 
+       aes(x = wineData$alcohol, y = wineData$sulphates, color = quality)) +
   scale_y_continuous("Sulphates") +
   scale_x_continuous("Alcohol") +
   ggtitle("Relationship between Quality, Alcohol and Sulphates") +
@@ -201,7 +210,9 @@ Here we see that the sulphates show very less effect on the quality of red wine.
 
 Let us take one more example. Let us find if volatile acidity and alcohol have any effect on quality.
 ```{r echo=FALSE, cache=FALSE}
-ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$volatile.acidity, color = quality)) +
+ggplot(data= wineData, 
+       aes(x = wineData$alcohol, 
+           y = wineData$volatile.acidity, color = quality)) +
   scale_y_continuous("Volatile Acidity") +
   scale_x_continuous("Alcohol") +
   ggtitle("Relationship between Quality, Alcohol and Volatile Acidity") +
@@ -214,7 +225,8 @@ Next, let us find if pH and alcohol have any effect on quality.
 
 ```{r echo=FALSE, cache=FALSE}
 
-ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$pH, color = quality)) +
+ggplot(data= wineData, 
+       aes(x = wineData$alcohol, y = wineData$pH, color = quality)) +
   scale_y_continuous("pH") +
   scale_x_continuous("Alcohol") +
   ggtitle("Relationship between Quality, Alcohol and pH") +
@@ -237,7 +249,8 @@ wineData$category[wineData$quality >= 8] = "very.good"
 Let us use this category value and plot the above three plots again. First let us plot the histogram of category.
 
 ```{r echo=FALSE, cache=FALSE}
-wineData$category <- factor(wineData$category, levels = c("bad","average","good","very.good"))
+wineData$category <- factor(wineData$category, 
+                            levels = c("bad","average","good","very.good"))
 ggplot(data = wineData, aes(x = wineData$category)) + 
   scale_x_discrete("Category") + 
   scale_y_discrete("Count") +
@@ -248,7 +261,8 @@ ggplot(data = wineData, aes(x = wineData$category)) +
 Now, let us plot the above multivariate graphs with the category variable. This will give more clear information.
 
 ```{r echo=FALSE, warning=FALSE}
-ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$citric.acid, color = category)) +
+ggplot(data= wineData, aes(x = wineData$alcohol, 
+                           y = wineData$citric.acid, color = category)) +
   scale_y_continuous("Citric Acid") +
   scale_x_continuous("Alcohol") +
   ggtitle("Relationship between Category, Alcohol and Citric Acid") +
@@ -257,10 +271,9 @@ ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$citric.acid, color
 
 Above plot clearly shows that higher the alcohol and citric acid, higher is the quality of red wine.
 
-
-
 ```{r echo=FALSE, cache=FALSE}
-ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$sulphates, color = category)) +
+ggplot(data= wineData, aes(x = wineData$alcohol, 
+                           y = wineData$sulphates, color = category)) +
   scale_y_continuous("Sulphates") +
   scale_x_continuous("Alcohol") +
   ggtitle("Relationship between Category, Alcohol and Sulphates") +
@@ -268,30 +281,6 @@ ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$sulphates, color =
 ```
 
 From the above plot, we see that the sulphate value of more than 0.75 have higher category.
-
-
-
-```{r echo=FALSE, cache=FALSE}
-ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$volatile.acidity, color = category)) +
-  scale_y_continuous("Volatile Acidity") +
-  scale_x_continuous("Alcohol") +
-  ggtitle("Relationship between Category, Alcohol and Volatile Acidity") +
-  geom_point()
-```
-
-From the above plot, we can see that higher the volatile acidity, lower is the quality of wine.
-
-
-```{r echo=FALSE, cache=FALSE}
-ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$pH, color = category)) +
-  scale_y_continuous("pH") +
-  scale_x_continuous("Alcohol") +
-  ggtitle("Relationship between quality, Alcohol and pH") +
-  geom_point()
-```
-
-This plot shows that if both pH and Alcohol is high, the quality of red wine tends to be higher.  
-
 
 ### Step 6: Reflection
 
@@ -301,7 +290,11 @@ In the bivariate analysis, we find the correlation of quality with rest other va
 
 In the multivariate analysis, the plots did not give a very clear idea. But we could see that the alcohol content has positive effect on the quality. To get a clear picture, we binned the quality into four categories (bad, average, good, very good). Most of the values fell into average and good bins. We again ran the plots with these values and found out that alcohol clearly has positive effect on the quality. When alcohol and citric acid both are high, there is higher probability for the red wine to be of good quality. The suphates did not show much variation. They had very less effect on the quality. The volatile acidity clearly showed negative effect on the quality. Lower the volatile acidity, higher would be the quality.  
 
+From personal point of view, there could be a lot more possibilities as there are 11 variables to be considered. We can have multi dimensional analysis which would bring out the exact dependencies of quality of red wine. 
+
 The further analysis of this project would include comparing every two variables against the quality and find which two variables affect the quality the most. We took alcohol in most of the example as the correlation showed positive influence of alcohol on acidity.
+
+
 
 #### References :
 
