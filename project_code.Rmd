@@ -174,10 +174,33 @@ cor(wineData[,keep], wineData$quality)
 
 From this, we can see that the quality of wine has less or negative correlation with acidity, no correlation with sugar and positive correlation with alcohol.  
 
-# TODO Add more bivariate plots here
+
+Let us draw some scatter plots between two variables :
+
+
+```{r echo=FALSE, warning=FALSE}
+ggplot(data= wineData, 
+       aes(y = wineData$quality, x = wineData$alcohol)) +
+  scale_y_continuous("Quality") +
+  scale_x_continuous("Alcohol") +
+  ggtitle("Relationship between Quality and Alcohol") +
+  geom_point()
+```
+
+The above plot clearly shows that as alcohol content increases, the quality increases.
 
 
 
+
+```{r echo=FALSE, warning=FALSE}
+ggplot(data= wineData, 
+       aes(x = wineData$alcohol, y = wineData$citric.acid)) +
+  scale_x_continuous("Alcohol") +
+  scale_y_continuous("Citric Acid") +
+  ggtitle("Relationship between Alcohol and Citric Acid") +
+  geom_point()
+```
+ The above plot does not provide any clear idea of what is going on.
 
 ### Step 4 : Multivariate Analysis
 
@@ -286,7 +309,7 @@ From the above plot, we see that the sulphate value of more than 0.75 have highe
 
 It is time to reflect all the observations. First, we tried to observe how each individual variable varies. We found that quality of red wine follows normal distribution with majority of quality values fall near to the mean. The fixed acidity and volatile acidity also follows normal distribution. The residual sugar value does not seem to follow normal ditribution. Most values fall near the range of 1 to 3 while some outliers extending upto 15. The chlorides have most values less than 0.15. Some values fall in the higher range. It would be interesting to see if any of these outliers have higher quality. The Free Sulfur Dioxide value and Total Sulfur Dioxide value also fall in the lower range. The red wine density seems to follow normal distribution with mean at around 0.9975.  
 
-In the bivariate analysis, we find the correlation of quality with rest other variables. We see that Alcohol content has the highest correlation with quality followed by volatile acidity and sulphates. The correlation values also show that residual sugar and pH should have very less effect on the quality as these correlation values are closer to 0.  
+In the bivariate analysis, we find the correlation of quality with rest other variables. We see that Alcohol content has the highest correlation with quality followed by volatile acidity and sulphates. The correlation values also show that residual sugar and pH should have very less effect on the quality as these correlation values are closer to 0. We also saw two plots. The alcohol versus quality plot also clearly showed that quality increases as alcohol content increases.   
 
 In the multivariate analysis, the plots did not give a very clear idea. But we could see that the alcohol content has positive effect on the quality. To get a clear picture, we binned the quality into four categories (bad, average, good, very good). Most of the values fell into average and good bins. We again ran the plots with these values and found out that alcohol clearly has positive effect on the quality. When alcohol and citric acid both are high, there is higher probability for the red wine to be of good quality. The suphates did not show much variation. They had very less effect on the quality. The volatile acidity clearly showed negative effect on the quality. Lower the volatile acidity, higher would be the quality.  
 
