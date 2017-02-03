@@ -87,7 +87,8 @@ The above plots the histogram of fixed acidity and volatile acidity. The fixed a
 
 Also let us plot histograms with all other variables:  
 
-Below is the histogram of Red Wine Residual Sugar
+Below is the histogram of Red Wine Residual Sugar. In this histogram, we see that
+Most of the values are below 4 and some outliers above 8 extending till 16.
 
 ```{r echo=FALSE, warning=FALSE}
 ggplot(data = wineData, aes(x = wineData$residual.sugar)) + 
@@ -97,7 +98,8 @@ ggplot(data = wineData, aes(x = wineData$residual.sugar)) +
   geom_histogram(binwidth = 0.25, fill = "blue", color = "black") 
 ```
 
-Below is the histogram of Red Wine Chlorides
+Below is the histogram of Red Wine Chlorides. In this histogram, we see that most
+of the values are below 0.2. It does not follow normal distribution.
 
 ```{r echo=FALSE, warning=FALSE}
 ggplot(data = wineData, aes(x = wineData$chlorides)) + 
@@ -108,7 +110,9 @@ ggplot(data = wineData, aes(x = wineData$chlorides)) +
 ```
 
 
-Below is the histogram os Red wine Free Sulfur Dioxide
+Below is the histogram os Red wine Free Sulfur Dioxide. From the lot, we can see
+that it follows positively skewed distribution. Majority of wines have less amount
+of free sulfur dioxide.
 
 ```{r echo=FALSE, warning=FALSE}
 ggplot(data = wineData, aes(x = wineData$free.sulfur.dioxide)) + 
@@ -118,7 +122,8 @@ ggplot(data = wineData, aes(x = wineData$free.sulfur.dioxide)) +
   geom_histogram(binwidth = 4, fill = "blue", color = "black") 
 ```
 
-Below is the histogram os red wine total sulfur dioxide
+Below is the histogram os red wine total sulfur dioxide. This plot follows positively
+skewed distribution. 
 
 ```{r echo=FALSE, warning=FALSE}
 ggplot(data = wineData, aes(x = wineData$total.sulfur.dioxide)) + 
@@ -128,7 +133,8 @@ ggplot(data = wineData, aes(x = wineData$total.sulfur.dioxide)) +
   geom_histogram(binwidth = 15, fill = "blue", color = "black")
 ```
 
-Below is the histogram of red wine density
+Below is the histogram of red wine density. From the plot we can see that red wine
+density follows normal distribution with mean at about 0.9975.
 
 ```{r echo=FALSE, warning=FALSE}
 ggplot(data = wineData, aes(x = wineData$density)) + 
@@ -138,7 +144,9 @@ ggplot(data = wineData, aes(x = wineData$density)) +
   geom_histogram(binwidth = 0.001, fill = "blue", color = "black")
 ```
 
-Below is the histogram of red wine sulphates
+Below is the histogram of red wine sulphates. The red wine sulphates peak at about
+0.6. From the plot, we can see that majority of the values fall between 0.5 and 0.7.
+
 
 ```{r echo=FALSE, warning=FALSE}
 ggplot(data = wineData, aes(x = wineData$sulphates)) + 
@@ -148,15 +156,8 @@ ggplot(data = wineData, aes(x = wineData$sulphates)) +
   geom_histogram(binwidth = 0.1, fill = "blue", color = "black")
 ```
 
-```{r echo=FALSE, warning=FALSE}
-ggplot(data = wineData, aes(x = wineData$citric.acid)) + 
-  scale_x_continuous("Red Wine Citric Acid") + 
-  scale_y_continuous("Count") +
-  ggtitle("Histogram of Red Wine Citric Acid") +
-  geom_histogram(binwidth = 0.1, fill = "blue", color = "black")
-```
-
-The histogram of pH level is shown below:
+The histogram of pH level is shown below. The pH value follows normal distribution
+as per the plot.
 
 ```{r echo=FALSE, warning=FALSE}
 ggplot(data = wineData, aes(x = wineData$pH)) + 
@@ -167,7 +168,9 @@ ggplot(data = wineData, aes(x = wineData$pH)) +
 ```
 
 
-Below is the histogram of Citric Acid
+Below is the plot of Red Wine Citric Acid. From the plot, we can see that citric
+acid values varies between 0 and 0.5. There are very few wines with citric acid
+content above 0.5.
 
 ```{r echo=FALSE, warning=FALSE}
 ggplot(data = wineData, aes(x = wineData$citric.acid)) + 
@@ -210,9 +213,9 @@ ggplot(data = wineData, aes(x = wineData$citric.acid, y = wineData$volatile.acid
   scale_y_continuous("Volatile Acidity") +
   ggtitle("Volatile Acidity vs Citric Acid") +
   geom_point(color='blue') + 
-  geom_smooth(method=lm, se=FALSE, fullrange=TRUE)
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE, color='orange')
 ```
-From the above plot, we can see that as citric acid content increases, the volatile acidity decreases.  
+From the above plot, we can see that as citric acid content increases, the volatile acidity decreases.  The above plot looks correct as per the correlation values. As the value of citric acid increases, the value of volatile acidity decreases and vice-versa.
 
 Next, let us plot Fixed Acidity versus Citric Acid
 ```{r echo=FALSE, warning=FALSE}
@@ -221,9 +224,9 @@ ggplot(data = wineData, aes(x = wineData$citric.acid, y = wineData$fixed.acidity
   scale_y_continuous("Fixed Acidity") +
   ggtitle("Fixed Acidity vs Citric Acid") +
   geom_point(color='blue') + 
-  geom_smooth(method=lm, se=FALSE, fullrange=TRUE)
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE, color='orange')
 ```
-From the above plot, we can see as citric acid content increases, fixed acidity increases.  
+From the above plot, we can see as citric acid content increases, fixed acidity increases. This is proved from the correlation values. Both citric acid and fixed acidity have positive correlation with quality.  
 
 Let us try citric acid versus pH
 ```{r echo=FALSE, warning=FALSE}
@@ -232,7 +235,7 @@ ggplot(data = wineData, aes(x = wineData$citric.acid, y = wineData$pH)) +
   scale_y_continuous("pH") +
   ggtitle("pH vs Citric Acid") +
   geom_point(color='blue') + 
-  geom_smooth(method=lm, se=FALSE, fullrange=TRUE)
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE, color='orange')
 ```
 The above analysis looks correct. As citric acid content increases, pH decreases. This is evident from the correlation value between citric acid and pH. Correlation between quality and pH is -0.05 and correlation between quality and citric acid is about 0.22. This makes it clear that citric acid and pH are inversely proportional to each other.
 
@@ -244,11 +247,11 @@ Let us draw some scatter plots between two variables :
 
 ```{r echo=FALSE, warning=FALSE}
 ggplot(data= wineData, 
-       aes(y = wineData$quality, x = wineData$alcohol)) +
-  scale_y_continuous("Quality") +
-  scale_x_continuous("Alcohol") +
-  ggtitle("Relationship between Quality and Alcohol") +
-  geom_point()
+       aes(factor(wineData$quality), wineData$alcohol)) +
+  ggtitle("Boxplot of Quality and Alcohol")+
+  scale_x_discrete("Quality") +
+  scale_y_continuous("Alcohol") +
+  geom_boxplot()
 ```
 
 The above plot clearly shows that as alcohol content increases, the quality increases.
@@ -275,7 +278,7 @@ ggplot(data= wineData,
   scale_y_continuous("Citric Acid") +
   ggtitle("Relationship between Quality, Alcohol and Citric Acid") +
   geom_point() +
-  scale_colour_hue()
+  scale_color_brewer(palette = 'RdYlGn')
 ```
 
 From the above plot, we can see that the quality is higher when both alcohol and citric acid content is higher.
@@ -291,7 +294,7 @@ ggplot(data= wineData,
   scale_x_continuous("Alcohol") +
   ggtitle("Relationship between Quality, Alcohol and Sulphates") +
   geom_point() +
-  scale_colour_hue()
+  scale_color_brewer(palette = 'RdYlGn')
 ```
 
 Here we see that the sulphates show very less effect on the quality of red wine.
@@ -306,7 +309,7 @@ ggplot(data= wineData,
   scale_x_continuous("Alcohol") +
   ggtitle("Relationship between Quality, Alcohol and Volatile Acidity") +
   geom_point() +
-  scale_colour_hue()
+  scale_color_brewer(palette = 'RdYlGn')
 ```
 
 This plot gives a guess that higher the volatile acidity, lower is the quality. But this cannot be confirmed for sure.
@@ -321,7 +324,7 @@ ggplot(data= wineData,
   scale_x_continuous("Alcohol") +
   ggtitle("Relationship between Quality, Alcohol and pH") +
   geom_point() +
-  scale_colour_hue()
+  scale_color_brewer(palette = 'RdYlGn')
 ```
 
 From the above plot, it is difficult to make any conclusion.  
