@@ -261,8 +261,9 @@ ggplot(data= wineData,
        aes(x = wineData$alcohol, y = wineData$citric.acid)) +
   scale_x_continuous("Alcohol") +
   scale_y_continuous("Citric Acid") +
+  geom_point(color='blue') + 
   ggtitle("Relationship between Alcohol and Citric Acid") +
-  geom_point()
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE, color='orange')
 ```
  The above plot does not provide any clear idea of what is going on.
 
@@ -330,25 +331,26 @@ ggplot(data= wineData,
 From the above plot, it is difficult to make any conclusion.  
 
 Finally, let us group by four range of quality. Let us call it bad, average, good and very good.   
-Bad is when quality is between 0-3, average between 3-5, good between 5-8 and very good is 8-10. All of them are not including upper bound.
+Bad is when quality is between 0-4, average between 5-6 and good above 6.
 
 ```{r echo=FALSE, cache=FALSE}
-wineData$category[wineData$quality < 4] = "bad"
-wineData$category[wineData$quality >= 4 & wineData$quality < 6] = "average"
-wineData$category[wineData$quality >= 6 & wineData$quality < 8] = "good"
-wineData$category[wineData$quality >= 8] = "very.good"
+wineData$category[wineData$quality <=4] = "bad"
+wineData$category[wineData$quality > 4 & wineData$quality <= 6] = "average"
+wineData$category[wineData$quality > 6] = "good"
 ```
 Let us use this category value and plot the above three plots again. First let us plot the histogram of category.
 
 ```{r echo=FALSE, cache=FALSE}
 wineData$category <- factor(wineData$category, 
-                            levels = c("bad","average","good","very.good"))
+                            levels = c("bad","average","good"))
 ggplot(data = wineData, aes(x = wineData$category)) + 
   scale_x_discrete("Category") + 
   scale_y_discrete("Count") +
   ggtitle("Histogram of Red Wine Category") +
   geom_bar(fill = "blue", color = "black", stat = "count") 
 ```
+To explain this categorization, we see that majority of wine fall in the average category. This somewhat follows normal distribution. The mean of quality was very much at the center of average at 5.36. Hence, it was decided to categorize 5 and 6 as average and lower and higher values as bad and good respectively.
+
 
 Now, let us plot the above multivariate graphs with the category variable. This will give more clear information.
 
@@ -366,27 +368,23 @@ ggplot(data= wineData, aes(x = wineData$alcohol,
 Now, let us plot the above multivariate graphs with the category variable. This will give more clear information. The above graph looks very informative. Let us use that plot and change its color scheme to make it more visible.
 
 ```{r echo=FALSE, warning=FALSE}
-ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$citric.acid, color = category)) +
-  scale_y_continuous("Citric Acid (g / dm^3)") +
-  scale_x_continuous("Alcohol % by volume") +
-  ggtitle("Relationship between Category, Alcohol and Citric Acid") +
-  geom_point() +
-  scale_colour_brewer(palette = "Set1")
+ggplot(data = wineData, aes(x = wineData$quality)) + 
+  scale_x_continuous("Wine Quality") + 
+  scale_y_continuous("Count") +
+  ggtitle("Histogram of Red Wine Quality") +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black")
 ```
-Above plot tends to show that higher the alcohol, higher is the quality of wine. The citric acid content does not clearly show any significant impact on the quality.  
+The above histogram is very important. It shows that majority of the wines fall in the middle range. The mean of wine quality was 5.36.
 
-```{r echo=FALSE, cache=FALSE}
-ggplot(data= wineData, aes(x = wineData$alcohol, 
-                           y = wineData$sulphates, color = category)) +
-  scale_y_continuous("Sulphates (g / dm3)") +
-  scale_x_continuous("Alcohol (% by volume)") +
-  ggtitle("Relationship between Category, Alcohol and Sulphates") +
-  geom_point() +
-  scale_colour_brewer(palette = "Set1")
+```{r echo=FALSE, warning=FALSE}
+ggplot(data = wineData, aes(x = wineData$citric.acid, y = wineData$fixed.acidity)) + 
+  scale_x_continuous("Citric Acid (g / dm^3)") + 
+  scale_y_continuous("Fixed Acidity (g / dm^3)") +
+  ggtitle("Fixed Acidity vs Citric Acid") +
+  geom_point(color='blue') + 
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE, color='orange')
 ```
-
-From the above plot, we can say with good confidence that sulphate content above 0.75 will have a better quality than the one less than 0.75.  
-
+The above plot gives a clear picture that as citric acid content goes up, the fixed acidity content also goes up.
 
 ```{r echo=FALSE, cache=FALSE}
 ggplot(data= wineData, aes(x = wineData$alcohol, y = wineData$volatile.acidity, color = category)) +
